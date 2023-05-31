@@ -11,7 +11,7 @@ Ni 1.450000
 d 1.000000
 illum 2
 map_Kd ghost.tga
-map_d .
+map_d ghost.tga
 
 newmtl lantern
 Ns 250.000000
@@ -22,5 +22,5 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd ghost_lantern.tga
-map_d .
+map_Kd ghost_lantern_red.tga
+map_d ghost_lantern_red.tga
