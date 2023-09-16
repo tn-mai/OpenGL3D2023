@@ -21,11 +21,6 @@ class ExportGameObjectToJson : EditorWindow
     bool flipYZAxis = false; // XZ平面のマップを-90度回転して、XY平面として出力する
     bool forceExportHiddens = false;
 
-    int startLevel = 2;
-    int endLevel = 4;
-    int mapSizeXZ = 3;
-    int mapSizeY = 8;
-
     [MenuItem("File/Export/GameObject To Json")]
 
     static void Init()
@@ -41,61 +36,6 @@ class ExportGameObjectToJson : EditorWindow
         if (GUILayout.Button("Export")) {
             Export(flipYZAxis, forceExportHiddens);
             Close();
-        }
-
-        GUILayout.BeginHorizontal("box");
-        GUILayout.Label( "Map Size(m):" + (16 << mapSizeXZ).ToString() );
-        mapSizeXZ = (int)GUILayout.HorizontalSlider((float)mapSizeXZ, 1.0f, 6.0f);
-        GUILayout.EndHorizontal();
-
-        GUILayout.BeginHorizontal("box");
-        GUILayout.Label( "Height(m):" + mapSizeY.ToString() );
-        mapSizeY = (int)GUILayout.HorizontalSlider((float)mapSizeY, 1.0f, 64.0f);
-        GUILayout.EndHorizontal();
-
-        GUILayout.BeginHorizontal("box");
-        GUILayout.Label( "Start Level:" + startLevel.ToString() );
-        startLevel = (int)GUILayout.HorizontalSlider((float)startLevel, 1.0f, 7.0f);
-        GUILayout.EndHorizontal();
-
-        GUILayout.BeginHorizontal("box");
-        GUILayout.Label( "End Level:" + endLevel.ToString() );
-        endLevel = (int)GUILayout.HorizontalSlider((float)endLevel, 1.0f, 8.0f);
-        GUILayout.EndHorizontal();
-
-        if (GUILayout.Button("Gen Terrain"))  {
-          var go = new GameObject("Block Terrain");
-          float xz = (16 << mapSizeXZ) >> startLevel;
-          GenBlockTerrain(go, new Vector3(xz, mapSizeY, xz), endLevel - startLevel, 1 << startLevel);
-        }
-    }
-
-    private void GenBlockTerrain(GameObject go, Vector3 scale, int level, int count)
-    {
-        GameObject[] list = new GameObject[count * count];
-        for (int z = 0; z < count; ++z) {
-            for (int x = 0; x < count; ++x) {
-                GameObject tmp;
-                if (level > 1) {
-                    tmp = new GameObject("Block Terrain Level:" + level + " (" + x + "," + z + ")");
-                } else {
-                    tmp = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    tmp.name = "Block Terrain Level:" + level + " (" + x + "," + z + ")";
-                    tmp.transform.localScale = new Vector3(scale.x, 1, scale.z);
-                }
-                tmp.transform.SetParent(go.transform);
-                float px = (x - count / 2) * scale.x + scale.x * 0.5f;
-                float pz = (z - count / 2) * scale.z + scale.z * 0.5f;
-                tmp.transform.localPosition = new Vector3(px, Random.Range(-scale.y, scale.y) * 0.5f, pz);
-                list[z * count + x] = tmp;
-            }
-        }
-        --level;
-        if (level > 0) {
-            Vector3 s = scale * 0.5f;
-            foreach(GameObject e in list) {
-                GenBlockTerrain(e, s, level, 2);
-            }
         }
     }
 
