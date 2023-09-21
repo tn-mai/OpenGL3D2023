@@ -44,7 +44,7 @@ class ExportGameObjectToJson : EditorWindow
         var path = EditorUtility.SaveFilePanel(
             "Export GameObject To Json",
             "",
-            "GameObjectTransforms.json",
+            "GameObjectMap.json",
             "json");
         if (path.Length == 0) {
             return;
