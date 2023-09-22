@@ -85,6 +85,13 @@ class ExportGameObjectToJson : EditorWindow
                         //}
                     }
                 }
+
+                string renderType = null;
+                MeshRenderer renderer = go.GetComponent<MeshRenderer>();
+                if (renderer != null) {
+                    renderType = renderer.material.GetTag("RenderType", true, "Opaque");
+                }
+
                 var t = go.transform.position;
                 var r = go.transform.eulerAngles;
                 var s = go.transform.localScale;
@@ -101,6 +108,9 @@ class ExportGameObjectToJson : EditorWindow
                 }
                 if (meshName != null && !meshName.Equals(System.String.Empty)) {
                     sb.Append(", \"mesh\" : \"" + meshName + "\"");
+                    if (renderType) {
+                        sb.Append(", \"renderType\" : \"" + renderType + "\"");
+                    }
                 }
                 sb.Append(", \"translate\" : [ " + t.x + ", " + t.y + ", " + t.z + " ]");
                 sb.Append(", \"rotate\" : [ " + r.x + ", " + r.y + ", " + r.z + " ]");
