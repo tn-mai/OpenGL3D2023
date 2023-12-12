@@ -108,7 +108,7 @@ class ExportGameObjectToJson : EditorWindow
                 }
                 if (meshName != null && !meshName.Equals(System.String.Empty)) {
                     sb.Append(", \"mesh\" : \"" + meshName + "\"");
-                    if (renderType) {
+                    if (renderType != null) {
                         sb.Append(", \"renderType\" : \"" + renderType + "\"");
                     }
                 }
