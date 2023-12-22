@@ -62,7 +62,28 @@ class ExportGameObjectToJson : EditorWindow
               }
             }
 
-            int count = 0;
+            // ボーンに該当するゲームオブジェクトを除去
+            var boneTransforms = new List<Transform>();
+            foreach(GameObject go in gameObjects) {
+                var c = go.GetComponent<SkinnedMeshRenderer>();
+                if (c != null) {
+                    boneTransforms.AddRange(c.bones);
+                }
+            }
+            for (int i = gameObjects.Count - 1; i >= 0; --i) {
+                var t = gameObjects[i].transform;
+                if (boneTransforms.Find(x => x == t) != null) {
+                    gameObjects.RemoveAt(i);
+                }
+                if (gameObjects[i].transform.parent != null) {
+                    var p = gameObjects[i].transform.parent;
+                    if (boneTransforms.Find(x => x == p) != null) {
+                        gameObjects.RemoveAt(i);
+                    }
+                }
+            }
+
+            int count = 0; // 出力したゲームオブジェクトの数
             SceneVisibilityManager svm = SceneVisibilityManager.instance;
             foreach (GameObject go in gameObjects) {
                 // ヒエラルキーで非表示設定になっているオブジェクトは無視する
@@ -92,8 +113,8 @@ class ExportGameObjectToJson : EditorWindow
                     renderType = renderer.material.GetTag("RenderType", true, "Opaque");
                 }
 
-                var t = go.transform.position;
-                var r = go.transform.eulerAngles;
+                var t = go.transform.localPosition;
+                var r = go.transform.localRotation.eulerAngles;
                 var s = go.transform.localScale;
                 if (flipYZAxis) {
                     (t.y, t.z) = (t.z, t.y);
@@ -121,11 +142,6 @@ class ExportGameObjectToJson : EditorWindow
                 List<BoxCollider> boxes = new List<BoxCollider>(go.GetComponents<BoxCollider>());
                 List<SphereCollider> spheres = new List<SphereCollider>(go.GetComponents<SphereCollider>());
                 List<CapsuleCollider> capsules = new List<CapsuleCollider>(go.GetComponents<CapsuleCollider>());
-                if (prefab) {
-                  boxes.AddRange(prefab.GetComponents<BoxCollider>());
-                  spheres.AddRange(prefab.GetComponents<SphereCollider>());
-                  capsules.AddRange(prefab.GetComponents<CapsuleCollider>());
-                }
                 if (boxes.Count > 0) {
                     sb.Append(", \"BoxCollider\" : [");
                     foreach (BoxCollider box in boxes) {
